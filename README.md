@@ -1,5 +1,7 @@
 # Placement Success AI System
 
+**Live Demo:** [Click here to view the live website] (https://umamaheshwari.pythonanywhere.com)
+
 A complete local placement success prediction system built with Django, Django REST Framework, and scikit-learn. The system includes student/faculty/officer dashboards, GitHub profile analysis, resume scoring, company matching, skill gap learning paths, report generation, and synthetic ML training.
 
 ## Setup
