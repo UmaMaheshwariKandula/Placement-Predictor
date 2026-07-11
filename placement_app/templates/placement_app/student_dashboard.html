@@ -1,0 +1,704 @@
+{% extends 'placement_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Dark Mode Support */
+    body.dark-mode .glass-card {
+        background: rgba(30, 30, 46, 0.95) !important;
+    }
+    
+    body.dark-mode .bg-gray-50 {
+        background-color: #1e1e2e !important;
+    }
+    
+    body.dark-mode .border {
+        border-color: #334155 !important;
+    }
+    
+    body.dark-mode .text-gray-500, 
+    body.dark-mode .text-gray-600 {
+        color: #cbd5e1 !important;
+    }
+    
+    body.dark-mode .text-indigo-600 {
+        color: #a5b4fc !important;
+    }
+    
+    body.dark-mode .company-card {
+        background-color: #1e1e2e !important;
+        border-color: #334155 !important;
+    }
+    
+    body.dark-mode .skill-card {
+        background-color: #1e1e2e !important;
+    }
+    
+    body.dark-mode .data-table th {
+        background-color: #1f2937 !important;
+        color: #f3f4f6 !important;
+    }
+    
+    body.dark-mode .data-table td {
+        color: #cbd5e1 !important;
+        border-bottom-color: #334155 !important;
+    }
+    
+    body.dark-mode .prediction-card {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    }
+    
+    body.dark-mode .text-green-600 {
+        color: #4ade80 !important;
+    }
+    
+    body.dark-mode input,
+    body.dark-mode select,
+    body.dark-mode textarea {
+        background-color: #1f2937 !important;
+        border-color: #334155 !important;
+        color: #f3f4f6 !important;
+    }
+    
+    body.dark-mode .bg-green-100 {
+        background-color: #065f46 !important;
+    }
+    
+    body.dark-mode .text-green-800 {
+        color: #a7f3d0 !important;
+    }
+    
+    .prediction-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 20px;
+        color: white;
+        text-align: center;
+    }
+    
+    .prediction-number {
+        font-size: 48px;
+        font-weight: 800;
+        text-align: center;
+        margin: 10px 0;
+    }
+    
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .glass-card:hover {
+        transform: translateY(-3px);
+    }
+    
+    .section-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+        border-left: 4px solid #667eea;
+        padding-left: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .form-input, select, textarea {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 10px 12px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .form-input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        padding: 12px 24px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+    }
+    
+    .company-card {
+        background: white;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 10px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+    
+    .company-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    }
+    
+    .skill-card {
+        background: white;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-left: 4px solid #22c55e;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table th {
+        background: #f8fafc;
+        padding: 10px;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .data-table td {
+        padding: 10px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .resource-link {
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        color: white !important;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .resource-link:hover {
+        background: rgba(0, 0, 0, 0.55);
+        transform: translateY(-2px);
+    }
+    
+    .cert-card {
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 10px;
+        color: white;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: block;
+    }
+    
+    .cert-card:hover {
+        transform: translateX(5px);
+    }
+    
+    .progress-bar {
+        transition: width 0.5s ease;
+    }
+</style>
+
+<div class="grid gap-5 lg:grid-cols-3">
+    <!-- Main Form Section -->
+    <section class="lg:col-span-2 glass-card p-5">
+        <h2 class="text-xl font-bold mb-4 section-header">🎯 Placement Prediction</h2>
+        
+        <form method="post" enctype="multipart/form-data" class="grid gap-3">
+            {% csrf_token %}
+            
+            <div class="border rounded-lg p-3 bg-gray-50">
+                <h3 class="font-semibold text-md mb-2 text-indigo-600">📚 Academic Details</h3>
+                <div class="grid sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-sm mb-1">CGPA *</label>
+                        <input name="cgpa" value="{{ request.POST.cgpa|default:'0' }}" type="number" step="0.1" min="0" max="10" class="form-input text-sm" required>
+                        <input type="file" name="cgpa_proof" accept=".pdf,.jpg,.png" class="mt-1 text-xs">
+                        <p class="text-xs text-gray-500 mt-0.5">Upload transcript/marksheet</p>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-sm mb-1">Backlogs</label>
+                        <input name="backlogs" value="{{ request.POST.backlogs|default:'0' }}" type="number" min="0" max="10" class="form-input text-sm">
+                        <input type="file" name="backlog_proof" accept=".pdf,.jpg,.png" class="mt-1 text-xs">
+                        <p class="text-xs text-gray-500 mt-0.5">Upload degree certificate</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border rounded-lg p-3 bg-gray-50">
+                <h3 class="font-semibold text-md mb-2 text-indigo-600">💻 Coding Skills</h3>
+                <div class="grid sm:grid-cols-2 gap-3">
+                    <div><label class="block font-semibold text-sm mb-1">Coding Score (0-100)</label><input name="coding_score" value="{{ request.POST.coding_score|default:'0' }}" type="number" min="0" max="100" class="form-input text-sm"></div>
+                    <div><label class="block font-semibold text-sm mb-1">Platform</label>
+                        <select name="coding_platform" class="form-input text-sm">
+                            <option value="">Select</option>
+                            <option value="hackerrank" {% if request.POST.coding_platform == 'hackerrank' %}selected{% endif %}>HackerRank</option>
+                            <option value="leetcode" {% if request.POST.coding_platform == 'leetcode' %}selected{% endif %}>LeetCode</option>
+                            <option value="codechef" {% if request.POST.coding_platform == 'codechef' %}selected{% endif %}>CodeChef</option>
+                        </select>
+                    </div>
+                    <div><label class="block font-semibold text-sm mb-1">Username</label><input name="coding_username" value="{{ request.POST.coding_username|default:'' }}" type="text" placeholder="username" class="form-input text-sm"></div>
+                    <div><label class="block font-semibold text-sm mb-1">Profile URL</label><input name="coding_proof_url" value="{{ request.POST.coding_proof_url|default:'' }}" type="url" placeholder="https://..." class="form-input text-sm"></div>
+                </div>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 gap-3">
+                <div class="border rounded-lg p-3 bg-gray-50">
+                    <h3 class="font-semibold text-md mb-2 text-indigo-600">📊 Aptitude Skills</h3>
+                    <input name="aptitude_score" value="{{ request.POST.aptitude_score|default:'0' }}" type="number" min="0" max="100" placeholder="Score (0-100)" class="form-input text-sm mb-2">
+                    <input name="aptitude_exam_name" value="{{ request.POST.aptitude_exam_name|default:'' }}" placeholder="Exam name (e.g., AMCAT)" class="form-input text-sm">
+                    <input type="file" name="aptitude_proof" accept=".pdf,.jpg,.png" class="mt-2 text-sm">
+                </div>
+                <div class="border rounded-lg p-3 bg-gray-50">
+                    <h3 class="font-semibold text-md mb-2 text-indigo-600">🗣️ Communication Skills</h3>
+                    <input name="communication_score" value="{{ request.POST.communication_score|default:'0' }}" type="number" min="0" max="100" placeholder="Score (0-100)" class="form-input text-sm mb-2">
+                    <input type="file" name="communication_certificate" accept=".pdf,.jpg,.png" class="text-sm">
+                    <p class="text-xs text-gray-500 mt-1">Upload IELTS/TOEFL certificate</p>
+                </div>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 gap-3">
+                <div class="border rounded-lg p-3 bg-gray-50">
+                    <h3 class="font-semibold text-md mb-2 text-indigo-600">📁 Projects</h3>
+                    <input name="projects" value="{{ request.POST.projects|default:'0' }}" type="number" min="0" max="15" placeholder="Number of projects" class="form-input text-sm mb-2">
+                    <textarea name="project_repo_links" rows="2" placeholder="GitHub repo links (one per line)" class="form-input text-sm">{{ request.POST.project_repo_links|default:'' }}</textarea>
+                </div>
+                <div class="border rounded-lg p-3 bg-gray-50">
+                    <h3 class="font-semibold text-md mb-2 text-indigo-600">💼 Internships</h3>
+                    <input name="internships" value="{{ request.POST.internships|default:'0' }}" type="number" min="0" max="5" placeholder="Number of internships" class="form-input text-sm mb-2">
+                    <input type="file" name="internship_certificate" accept=".pdf,.jpg,.png" class="text-sm">
+                </div>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 gap-3">
+                <div class="border rounded-lg p-3 bg-gray-50">
+                    <h3 class="font-semibold text-md mb-2 text-indigo-600">📜 Certifications</h3>
+                    <input name="certifications" value="{{ request.POST.certifications|default:'0' }}" type="number" min="0" max="10" placeholder="Number of certifications" class="form-input text-sm mb-2">
+                    <textarea name="certification_links" rows="2" placeholder="Course links (Coursera, NPTEL, etc.)" class="form-input text-sm">{{ request.POST.certification_links|default:'' }}</textarea>
+                </div>
+                <div class="border rounded-lg p-3 bg-gray-50">
+                    <h3 class="font-semibold text-md mb-2 text-indigo-600">🏆 Hackathons</h3>
+                    <input name="hackathon" value="{{ request.POST.hackathon|default:'0' }}" type="number" min="0" max="5" placeholder="Number of hackathons" class="form-input text-sm mb-2">
+                    <input type="file" name="hackathon_certificate" accept=".pdf,.jpg,.png" class="text-sm">
+                </div>
+            </div>
+            
+            <div class="border rounded-lg p-3 bg-gray-50">
+                <h3 class="font-semibold text-md mb-2 text-indigo-600">🐙 GitHub & Coding Profiles</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><input name="github_username" value="{{ request.POST.github_username|default:'' }}" type="text" placeholder="GitHub username" class="form-input text-sm"></div>
+                    <div><input name="github_contributions" value="{{ request.POST.github_contributions|default:'0' }}" type="number" min="0" max="1000" placeholder="Contributions" class="form-input text-sm"></div>
+                    <div><input name="leetcode_username" value="{{ request.POST.leetcode_username|default:'' }}" type="text" placeholder="LeetCode username" class="form-input text-sm"></div>
+                    <div><input name="leetcode_solved" value="{{ request.POST.leetcode_solved|default:'0' }}" type="number" min="0" max="500" placeholder="Problems solved" class="form-input text-sm"></div>
+                    <div><input name="hackerrank_username" value="{{ request.POST.hackerrank_username|default:'' }}" type="text" placeholder="HackerRank username" class="form-input text-sm"></div>
+                    <div><input name="soft_skills" value="{{ request.POST.soft_skills|default:'0' }}" type="number" min="0" max="100" placeholder="Soft skills (0-100)" class="form-input text-sm"></div>
+                </div>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 gap-3">
+                <div class="border rounded-lg p-3 bg-gray-50">
+                    <h3 class="font-semibold text-md mb-2 text-indigo-600">📄 Resume</h3>
+                    <input name="resume_file" type="file" accept=".pdf,.docx" class="text-sm">
+                    <p class="text-xs text-gray-500 mt-1">Upload for ATS analysis</p>
+                </div>
+                <div class="border rounded-lg p-3 bg-gray-50">
+                    <h3 class="font-semibold text-md mb-2 text-indigo-600">🎯 Extra Skills</h3>
+                    <input name="extra_skills" value="{{ request.POST.extra_skills|default:'' }}" type="text" placeholder="Python, SQL, Django, AWS" class="form-input text-sm">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-primary w-full">🚀 Run Prediction</button>
+        </form>
+        
+        <div class="mt-5 grid gap-4 grid-cols-2">
+            <div class="prediction-card">
+                <h3 class="font-semibold text-lg">🎯 Model Average Probability</h3>
+                <p class="prediction-number">{{ predictions.average_probability|default:"0" }}%</p>
+                <p class="text-base font-semibold mt-2">Confidence: {{ predictions.confidence|default:"0" }}%</p>
+            </div>
+            
+            <div class="prediction-card">
+                <h3 class="font-semibold text-lg">📅 Placement Timeline</h3>
+                <p class="prediction-number">Month {{ timeline.predicted_month|default:6 }}</p>
+                <p class="text-sm mb-2">Predicted within next year</p>
+                
+                <div class="mt-2 pt-2 border-t border-white/30">
+                    <p class="text-sm font-bold mb-2 text-white">📚 Preparation Resources:</p>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <a href="https://www.indiabix.com/aptitude/questions-and-answers/" target="_blank" class="resource-link text-center">📊 Aptitude</a>
+                        <a href="https://www.geeksforgeeks.org/verbal-ability/" target="_blank" class="resource-link text-center">🗣️ Verbal</a>
+                        <a href="https://www.geeksforgeeks.org/technical-interview-questions/" target="_blank" class="resource-link text-center">💻 Technical</a>
+                        <a href="https://www.geeksforgeeks.org/company-interview-corner/" target="_blank" class="resource-link text-center">🏢 Company Wise</a>
+                    </div>
+                    
+                    <p class="text-sm font-bold mt-2 text-white">📖 Practice Platforms:</p>
+                    <div class="flex flex-wrap gap-2 justify-center mt-1">
+                        <a href="https://www.hackerrank.com/" target="_blank" class="resource-link text-xs">HackerRank</a>
+                        <a href="https://leetcode.com/" target="_blank" class="resource-link text-xs">LeetCode</a>
+                        <a href="https://www.codechef.com/" target="_blank" class="resource-link text-xs">CodeChef</a>
+                        <a href="https://www.geeksforgeeks.org/" target="_blank" class="resource-link text-xs">GeeksforGeeks</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 glass-card p-3">
+            <h3 class="font-semibold text-md mb-2 text-indigo-600">🎮 What-if Simulator</h3>
+            <div class="space-y-2">
+                <div>
+                    <label class="text-sm">CGPA <span id="cgpa-value" class="font-bold text-indigo-600">0</span></label>
+                    <input id="sim-cgpa" type="range" min="0" max="10" step="0.1" value="0" class="w-full" oninput="updateSimulation()" style="accent-color: #667eea;">
+                </div>
+                <div>
+                    <label class="text-sm">Coding score <span id="coding-value" class="font-bold text-indigo-600">0</span></label>
+                    <input id="sim-coding" type="range" min="0" max="100" value="0" class="w-full" oninput="updateSimulation()" style="accent-color: #667eea;">
+                </div>
+                <div>
+                    <label class="text-sm">Projects <span id="projects-value" class="font-bold text-indigo-600">0</span></label>
+                    <input id="sim-projects" type="range" min="0" max="15" value="0" class="w-full" oninput="updateSimulation()" style="accent-color: #667eea;">
+                </div>
+                <div class="p-2 bg-indigo-50 rounded-lg">
+                    <p class="font-semibold text-indigo-800 text-sm">📈 Simulated Probability:</p>
+                    <p id="sim-result" class="text-xl font-bold text-indigo-600">0%</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sidebar with Mock Tests, Leaderboard & Salary Prediction -->
+    <aside class="space-y-4">
+        <!-- Mock Tests Link -->
+        <a href="{% url 'mock_test_list' %}" class="glass-card p-4 block text-center hover:bg-indigo-50 transition mb-3">
+            <div class="flex items-center justify-center gap-3">
+                <span class="text-2xl">📝</span>
+                <div>
+                    <p class="font-semibold text-lg">Take Mock Tests</p>
+                    <p class="text-sm text-gray-500">Practice aptitude, coding & verbal</p>
+                </div>
+            </div>
+        </a>
+        
+        <!-- Leaderboard Link -->
+        <a href="{% url 'leaderboard' %}" class="glass-card p-4 block text-center hover:bg-indigo-50 transition mb-3">
+            <div class="flex items-center justify-center gap-3">
+                <span class="text-2xl">🏆</span>
+                <div>
+                    <p class="font-semibold text-lg">Leaderboard</p>
+                    <p class="text-sm text-gray-500">See top performers</p>
+                </div>
+            </div>
+        </a>
+        
+        <!-- GitHub Analyzer -->
+        <div class="glass-card p-3">
+            <h3 class="text-md font-semibold mb-2 text-indigo-600">🐙 GitHub Analyzer</h3>
+            {% if github_result and github_result.developer_score %}
+            <p class="text-sm">✅ <strong>Verified Score:</strong> {{ github_result.developer_score }}/100</p>
+            <p class="text-xs">📁 Repos: {{ github_result.repos }} | ⭐ Stars: {{ github_result.stars }}</p>
+            <p class="text-xs">💻 Languages: {{ github_result.languages|join:", " }}</p>
+            <p class="text-green-600 text-xs mt-1">✓ Data from GitHub API</p>
+            {% else %}
+            <p class="text-sm text-gray-500">Enter GitHub username to fetch REAL contribution data</p>
+            {% endif %}
+        </div>
+        
+        <!-- Resume Scorer -->
+        <div class="glass-card p-3">
+            <h3 class="text-md font-semibold mb-2 text-indigo-600">📄 Resume Scorer (ATS Analysis)</h3>
+            {% if resume_result.resume_score %}
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-semibold">Overall Score:</span>
+                    <span class="text-2xl font-bold {% if resume_result.resume_score >= 70 %}text-green-600{% elif resume_result.resume_score >= 50 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                        {{ resume_result.resume_score }}%
+                    </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                    <div class="{% if resume_result.resume_score >= 70 %}bg-green-600{% elif resume_result.resume_score >= 50 %}bg-yellow-600{% else %}bg-red-600{% endif %} h-2 rounded-full progress-bar" style="width: {{ resume_result.resume_score }}%"></div>
+                </div>
+                <p class="text-sm font-medium mb-2">📊 {{ resume_result.summary }}</p>
+                {% if resume_result.keywords %}
+                <div class="mb-3">
+                    <p class="text-xs font-semibold mb-1">🔑 Keywords Found:</p>
+                    <div class="flex flex-wrap gap-1">
+                        {% for keyword in resume_result.keywords %}
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">{{ keyword }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                {% if resume_result.suggestions %}
+                <div class="mb-2">
+                    <p class="text-xs font-semibold mb-1">💡 Improvement Suggestions:</p>
+                    <ul class="list-disc pl-4 text-xs space-y-1">
+                        {% for suggestion in resume_result.suggestions %}
+                        <li>{{ suggestion }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <div class="flex gap-2 mt-3">
+                    <a href="https://www.canva.com/resumes/templates/" target="_blank" class="bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block text-center">📥 Get Template</a>
+                    <a href="https://www.canva.com/create/resumes/" target="_blank" class="bg-purple-600 text-white px-2 py-1 rounded text-xs inline-block text-center">🎨 Build Resume</a>
+                </div>
+            {% else %}
+                <p class="text-sm text-gray-500">Upload your resume (PDF/DOCX) to receive ATS feedback, keyword analysis, and improvement suggestions.</p>
+                <div class="mt-2 text-xs text-gray-400 space-y-1">
+                    <p>✅ ATS compatibility check</p>
+                    <p>✅ Keyword optimization</p>
+                    <p>✅ Formatting suggestions</p>
+                    <p>✅ Section improvements</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Company Matches -->
+        <div class="glass-card p-3">
+            <h3 class="text-md font-semibold mb-2 text-indigo-600">🏢 Top Company Matches</h3>
+            {% if company_matches %}
+                {% for match in company_matches %}
+                <div class="company-card p-2 mb-2">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <strong class="text-sm">{{ match.company }}</strong>
+                            <span class="text-green-600 ml-2 text-xs">{{ match.match_percentage }}%</span>
+                            <p class="text-xs text-gray-500">{{ match.required_skills|join:", "|truncatechars:35 }}</p>
+                        </div>
+                        <button onclick="window.open('https://www.google.com/search?q={{ match.company }}+careers', '_blank')" class="bg-indigo-600 text-white px-2 py-1 rounded text-xs hover:bg-indigo-700">Jobs →</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-sm text-gray-500">Submit your profile to see company matches</p>
+            {% endif %}
+        </div>
+        
+        <!-- Skill Gap Plan -->
+        <div class="glass-card p-3">
+            <h3 class="text-md font-semibold mb-2 text-indigo-600">📚 Skill Gap Plan</h3>
+            {% if skill_analysis.learning_plan %}
+                {% for item in skill_analysis.learning_plan %}
+                <div class="skill-card p-2 mb-2">
+                    <p class="text-sm"><strong>Week {{ item.week }}:</strong> {{ item.focus }}</p>
+                    <p class="text-xs text-gray-600">{{ item.tip }}</p>
+                    <button onclick="window.open('https://www.youtube.com/results?search_query={{ item.focus }}+tutorial', '_blank')" class="mt-1 bg-green-600 text-white px-2 py-0.5 rounded text-xs hover:bg-green-700">Learn →</button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="skill-card p-2 mb-2">
+                    <p class="text-sm"><strong>Week 1:</strong> Coding Skills</p>
+                    <p class="text-xs text-gray-600">Practice data structures and algorithms daily</p>
+                    <button onclick="window.open('https://www.youtube.com/results?search_query=coding+tutorial', '_blank')" class="mt-1 bg-green-600 text-white px-2 py-0.5 rounded text-xs">Learn →</button>
+                </div>
+                <div class="skill-card p-2 mb-2">
+                    <p class="text-sm"><strong>Week 2:</strong> Aptitude Skills</p>
+                    <p class="text-xs text-gray-600">Solve quantitative and logical reasoning problems</p>
+                    <button onclick="window.open('https://www.youtube.com/results?search_query=aptitude+tricks', '_blank')" class="mt-1 bg-green-600 text-white px-2 py-0.5 rounded text-xs">Learn →</button>
+                </div>
+                <div class="skill-card p-2 mb-2">
+                    <p class="text-sm"><strong>Week 3:</strong> Communication Skills</p>
+                    <p class="text-xs text-gray-600">Practice speaking and writing clearly</p>
+                    <button onclick="window.open('https://www.youtube.com/results?search_query=communication+skills', '_blank')" class="mt-1 bg-green-600 text-white px-2 py-0.5 rounded text-xs">Learn →</button>
+                </div>
+                <div class="skill-card p-2 mb-2">
+                    <p class="text-sm"><strong>Week 4:</strong> Project Development</p>
+                    <p class="text-xs text-gray-600">Build real-world projects for portfolio</p>
+                    <button onclick="window.open('https://www.youtube.com/results?search_query=project+development', '_blank')" class="mt-1 bg-green-600 text-white px-2 py-0.5 rounded text-xs">Learn →</button>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- How to Increase Your Placement Chance -->
+        <div class="glass-card p-3">
+            <h3 class="text-md font-semibold mb-2 text-indigo-600">📈 How to Increase Your Placement Chance</h3>
+            {% if improvement_impacts %}
+                <div class="mb-3 p-2 bg-blue-50 rounded-lg">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-xs text-gray-600">Current Probability</p>
+                            <p class="text-2xl font-bold text-indigo-600">{{ improvement_impacts.current_probability }}%</p>
+                        </div>
+                        <div class="text-center">
+                            <i class="fas fa-arrow-right text-2xl text-gray-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-600">After Improvements</p>
+                            <p class="text-2xl font-bold text-green-600">{{ improvement_impacts.potential_probability }}%</p>
+                        </div>
+                        <div>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">+{{ improvement_impacts.total_improvement }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-xs font-semibold mb-2">🎯 Focus on these skills for maximum improvement:</p>
+                {% for impact in improvement_impacts.impacts %}
+                <div class="border rounded-lg p-2 mb-2 hover:shadow-md transition">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-semibold">{{ impact.skill }}</p>
+                            <p class="text-xs text-gray-500">{{ impact.current }} → {{ impact.target }} ({{ impact.improvement }})</p>
+                            <p class="text-xs text-gray-600 mt-1">💡 {{ impact.tip }}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-green-600 font-bold text-sm">{{ impact.impact }}</span>
+                            <p class="text-xs text-gray-400">increase</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="mt-2 text-xs text-gray-500 italic">* Based on improving ONE skill at a time</div>
+            {% else %}
+                <p class="text-sm text-gray-500">Submit your profile to see what skills to improve and how much your probability will increase.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Salary Prediction -->
+        <div class="glass-card p-3">
+            <h3 class="text-md font-semibold mb-2 text-indigo-600">💰 Salary Prediction</h3>
+            {% if salary_prediction %}
+                <div class="text-center mb-3">
+                    <p class="text-xs text-gray-500">Estimated Salary</p>
+                    <p class="text-3xl font-bold text-green-600">₹{{ salary_prediction.estimated_salary }} LPA</p>
+                    <p class="text-xs text-gray-400">Range: ₹{{ salary_prediction.salary_range.min }} - ₹{{ salary_prediction.salary_range.max }} LPA</p>
+                </div>
+                
+                <div class="mb-2">
+                    <p class="text-xs font-semibold mb-1">📊 Salary Breakdown:</p>
+                    <div class="space-y-1 text-xs">
+                        <div class="flex justify-between"><span>Base Salary</span><span>₹{{ salary_prediction.breakdown.base_salary }} LPA</span></div>
+                        <div class="flex justify-between"><span>CGPA</span><span>+₹{{ salary_prediction.breakdown.cgpa_contribution }} LPA</span></div>
+                        <div class="flex justify-between"><span>Coding</span><span>+₹{{ salary_prediction.breakdown.coding_contribution }} LPA</span></div>
+                        <div class="flex justify-between"><span>Aptitude</span><span>+₹{{ salary_prediction.breakdown.aptitude_contribution }} LPA</span></div>
+                        <div class="flex justify-between"><span>Communication</span><span>+₹{{ salary_prediction.breakdown.communication_contribution }} LPA</span></div>
+                        <div class="flex justify-between"><span>Projects</span><span>+₹{{ salary_prediction.breakdown.projects_contribution }} LPA</span></div>
+                        <div class="flex justify-between"><span>Internships</span><span>+₹{{ salary_prediction.breakdown.internship_contribution }} LPA</span></div>
+                        <div class="flex justify-between"><span>Certifications</span><span>+₹{{ salary_prediction.breakdown.cert_contribution }} LPA</span></div>
+                    </div>
+                </div>
+                
+                <div class="mb-2">
+                    <p class="text-xs font-semibold mb-1">🏢 Company-wise Salary:</p>
+                    <div class="grid grid-cols-2 gap-1 text-xs">
+                        <div class="flex justify-between"><span>TCS</span><span>₹{{ salary_prediction.company_salaries.TCS|floatformat:1 }} LPA</span></div>
+                        <div class="flex justify-between"><span>Infosys</span><span>₹{{ salary_prediction.company_salaries.Infosys|floatformat:1 }} LPA</span></div>
+                        <div class="flex justify-between"><span>Amazon</span><span>₹{{ salary_prediction.company_salaries.Amazon|floatformat:1 }} LPA</span></div>
+                        <div class="flex justify-between"><span>Google</span><span>₹{{ salary_prediction.company_salaries.Google|floatformat:1 }} LPA</span></div>
+                        <div class="flex justify-between"><span>Microsoft</span><span>₹{{ salary_prediction.company_salaries.Microsoft|floatformat:1 }} LPA</span></div>
+                        <div class="flex justify-between"><span>Deloitte</span><span>₹{{ salary_prediction.company_salaries.Deloitte|floatformat:1 }} LPA</span></div>
+                    </div>
+                </div>
+                
+                <div class="mt-2 text-xs text-gray-400 italic">
+                    * Salary estimates based on current market trends
+                </div>
+            {% else %}
+                <p class="text-sm text-gray-500">Submit your profile to see salary prediction.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Free Certification Courses -->
+        <div class="glass-card p-3">
+            <h3 class="text-md font-semibold mb-2 text-indigo-600">🎓 Free Certification Courses</h3>
+            <div class="space-y-2">
+                <a href="https://www.coursera.org/professional-certificates/google-it-support" target="_blank" class="cert-card block" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);">
+                    <p class="font-semibold text-sm">📊 Google IT Support</p>
+                    <p class="text-xs">Coursera - 5 months | Free Certificate</p>
+                </a>
+                <a href="https://online.courses.nptel.ac.in/" target="_blank" class="cert-card block" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+                    <p class="font-semibold text-sm">🎓 NPTEL Courses</p>
+                    <p class="text-xs">IIT-certified | Free | 8-12 weeks</p>
+                </a>
+                <a href="https://www.udemy.com/courses/development/" target="_blank" class="cert-card block" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+                    <p class="font-semibold text-sm">💻 Udemy Development</p>
+                    <p class="text-xs">Python, Java, Web Dev | Certificate</p>
+                </a>
+                <a href="https://www.freecodecamp.org/" target="_blank" class="cert-card block" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+                    <p class="font-semibold text-sm">🌐 freeCodeCamp</p>
+                    <p class="text-xs">Full-stack | 300 hrs | Free Certificate</p>
+                </a>
+                <a href="https://www.mygreatlearning.com/academy" target="_blank" class="cert-card block" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+                    <p class="font-semibold text-sm">📈 Great Learning Academy</p>
+                    <p class="text-xs">AI, Cloud, Data Science | Free</p>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Job Demand -->
+        <div class="glass-card p-3">
+            <h3 class="text-md font-semibold mb-2 text-indigo-600">📊 Job Demand</h3>
+            <div class="max-h-60 overflow-y-auto">
+                {% for skill in trending_skills %}
+                <div class="flex justify-between items-center p-1 border-b text-sm">
+                    <div>
+                        <strong>{{ skill.skill }}</strong>
+                        <span class="text-green-600 ml-1 text-xs">{{ skill.salary }}</span>
+                    </div>
+                    <button onclick="window.open('https://www.naukri.com/{{ skill.skill }}-jobs', '_blank')" class="bg-orange-500 text-white px-2 py-0.5 rounded text-xs hover:bg-orange-600">Find Jobs →</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </aside>
+</div>
+
+<div class="mt-5 glass-card p-4">
+    <h2 class="text-lg font-semibold mb-3 text-indigo-600">📋 Recent Submissions</h2>
+    <div class="overflow-x-auto">
+        <table class="data-table w-full text-sm">
+            <thead>
+                <tr>
+                    <th class="px-2 py-1">Date</th>
+                    <th class="px-2 py-1">Probability</th>
+                    <th class="px-2 py-1">Month</th>
+                    <th class="px-2 py-1">Resume</th>
+                    <th class="px-2 py-1">Report</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in student_records|slice:":5" %}
+                <tr class="border-t">
+                    <td class="px-2 py-1">{{ record.created_at|date:"Y-m-d" }}</td>
+                    <td class="px-2 py-1 font-bold {% if record.placement_probability > 70 %}text-green-600{% elif record.placement_probability > 40 %}text-yellow-600{% else %}text-red-600{% endif %}">{{ record.placement_probability }}%</td>
+                    <td class="px-2 py-1">{{ record.placement_month }}</td>
+                    <td class="px-2 py-1">{{ record.resume_score }}%</td>
+                    <td class="px-2 py-1"><a href="{% url 'download_report' record.id %}" class="text-indigo-600 hover:underline">Download</a></td>
+                </tr>
+                {% empty %}
+                <tr class="border-t">
+                    <td colspan="5" class="text-center py-2 text-gray-500">No history yet. Submit a prediction to see results.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function updateSimulation() {
+    let cgpa = parseFloat(document.getElementById('sim-cgpa').value);
+    let coding = parseFloat(document.getElementById('sim-coding').value);
+    let projects = parseFloat(document.getElementById('sim-projects').value);
+    
+    let probability = (cgpa * 8) + (coding * 0.2) + (projects * 2);
+    probability = Math.min(98, Math.max(5, Math.round(probability)));
+    
+    document.getElementById('sim-result').innerHTML = `🎯 ${probability}% chance based on CGPA, coding, and projects`;
+    document.getElementById('cgpa-value').innerText = cgpa;
+    document.getElementById('coding-value').innerText = coding;
+    document.getElementById('projects-value').innerText = projects;
+}
+updateSimulation();
+</script>
+
+{% endblock %}

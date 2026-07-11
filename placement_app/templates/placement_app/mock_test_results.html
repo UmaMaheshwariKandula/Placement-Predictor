@@ -1,0 +1,52 @@
+{% extends 'placement_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="glass-card p-6">
+    <h2 class="text-2xl font-bold mb-6 section-header">📊 Your Test Results</h2>
+    
+    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg p-4 mb-6 text-center">
+        <p class="text-lg">Average Score</p>
+        <p class="text-4xl font-bold">{{ avg_score }}%</p>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="data-table w-full">
+            <thead>
+                <tr>
+                    <th>Test Name</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                    <th>Result</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.mock_test.title }}</td>
+                    <td>{{ result.score }}/{{ result.total_marks }}</td>
+                    <td>{{ result.percentage }}%</td>
+                    <td>
+                        {% if result.percentage >= 60 %}
+                            <span class="text-green-600">✅ Pass</span>
+                        {% else %}
+                            <span class="text-red-600">❌ Fail</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ result.completed_at|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4">No tests completed yet. <a href="{% url 'mock_test_list' %}" class="text-indigo-600">Take a test →</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-6 text-center">
+        <a href="{% url 'mock_test_list' %}" class="btn-primary inline-block">Take Another Test</a>
+    </div>
+</div>
+{% endblock %}

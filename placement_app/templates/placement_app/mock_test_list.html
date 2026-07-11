@@ -1,0 +1,75 @@
+{% extends 'placement_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="glass-card p-6">
+    <h2 class="text-2xl font-bold mb-6 section-header">📝 Mock Tests</h2>
+    
+    <!-- Aptitude Tests -->
+    <div class="mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-indigo-600">📊 Aptitude Tests</h3>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {% for test in aptitude_tests %}
+            <div class="border rounded-lg p-4 hover:shadow-lg transition">
+                <h4 class="font-bold text-lg">{{ test.title }}</h4>
+                <p class="text-sm text-gray-500 mb-2">⏱️ {{ test.time_limit }} minutes | ✅ {{ test.passing_score }}% to pass</p>
+                <p class="text-sm mb-3">{{ test.questions.count }} questions</p>
+                {% if test.id in completed_tests %}
+                    <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">✓ Completed</span>
+                {% else %}
+                    <a href="{% url 'mock_test_detail' test.id %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 inline-block">Start Test →</a>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="text-gray-500">No aptitude tests available yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Coding Tests -->
+    <div class="mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-indigo-600">💻 Coding Tests</h3>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {% for test in coding_tests %}
+            <div class="border rounded-lg p-4 hover:shadow-lg transition">
+                <h4 class="font-bold text-lg">{{ test.title }}</h4>
+                <p class="text-sm text-gray-500 mb-2">⏱️ {{ test.time_limit }} minutes | ✅ {{ test.passing_score }}% to pass</p>
+                <p class="text-sm mb-3">{{ test.questions.count }} questions</p>
+                {% if test.id in completed_tests %}
+                    <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">✓ Completed</span>
+                {% else %}
+                    <a href="{% url 'mock_test_detail' test.id %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 inline-block">Start Test →</a>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="text-gray-500">No coding tests available yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Verbal Tests -->
+    <div class="mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-indigo-600">🗣️ Verbal Tests</h3>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {% for test in verbal_tests %}
+            <div class="border rounded-lg p-4 hover:shadow-lg transition">
+                <h4 class="font-bold text-lg">{{ test.title }}</h4>
+                <p class="text-sm text-gray-500 mb-2">⏱️ {{ test.time_limit }} minutes | ✅ {{ test.passing_score }}% to pass</p>
+                <p class="text-sm mb-3">{{ test.questions.count }} questions</p>
+                {% if test.id in completed_tests %}
+                    <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">✓ Completed</span>
+                {% else %}
+                    <a href="{% url 'mock_test_detail' test.id %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 inline-block">Start Test →</a>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="text-gray-500">No verbal tests available yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="mt-8 text-center">
+        <a href="{% url 'student_dashboard' %}" class="text-indigo-600 hover:underline">← Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

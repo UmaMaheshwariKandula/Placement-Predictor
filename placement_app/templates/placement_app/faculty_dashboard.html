@@ -1,0 +1,57 @@
+{% extends 'placement_app/base.html' %}
+{% block content %}
+<div class="grid gap-6 lg:grid-cols-3 mb-6">
+    <div class="bg-white rounded shadow p-4">
+        <h3 class="font-semibold text-lg">Class average probability</h3>
+        <p class="text-3xl font-bold">{{ average_probability }}%</p>
+    </div>
+    <div class="bg-white rounded shadow p-4">
+        <h3 class="font-semibold text-lg">At-risk students</h3>
+        <p class="text-3xl font-bold">{{ at_risk|length }}</p>
+    </div>
+    <div class="bg-white rounded shadow p-4">
+        <h3 class="font-semibold text-lg">Top performers</h3>
+        <p class="text-3xl font-bold">{{ top_students|length }}</p>
+    </div>
+</div>
+<div class="grid gap-6 lg:grid-cols-2">
+    <section class="bg-white rounded shadow p-4">
+        <h2 class="text-xl font-semibold mb-4">At-risk students</h2>
+        <ul class="space-y-3">
+            {% for record in at_risk %}
+            <li class="border rounded p-3">
+                <strong>{{ record.user.username if record.user else 'Guest' }}</strong> — {{ record.placement_probability }}%
+            </li>
+            {% empty %}
+            <li>No at-risk students.</li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="bg-white rounded shadow p-4">
+        <h2 class="text-xl font-semibold mb-4">Top performers</h2>
+        <ul class="space-y-3">
+            {% for record in top_students %}
+            <li class="border rounded p-3">
+                <strong>{{ record.user.username if record.user else 'Guest' }}</strong> — {{ record.placement_probability }}%
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+<div class="mt-6 bg-white rounded shadow p-4">
+    <h2 class="text-xl font-semibold mb-4">Skill gap trends</h2>
+    <div class="grid gap-4 sm:grid-cols-2">
+        {% for trend in skill_trends %}
+        <div class="border rounded p-3">
+            <p class="font-semibold">{{ trend.name }}</p>
+            <p>Gaps: {{ trend.gap_count }}</p>
+            <p>Probability: {{ trend.probability }}%</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="mt-6 bg-white rounded shadow p-4">
+    <h2 class="text-xl font-semibold mb-4">Export student data</h2>
+    <p>Use Django admin export or generate a CSV from the database using Python scripts.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,291 @@
+{% extends 'placement_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .leaderboard-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .leaderboard-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .leaderboard-header h1 {
+        font-size: 36px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .leaderboard-header p {
+        color: #6b7280;
+        font-size: 16px;
+    }
+    
+    /* Top 3 Medals */
+    .top-3 {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 30px;
+        margin-bottom: 40px;
+        padding: 20px;
+    }
+    
+    .medal-card {
+        text-align: center;
+        padding: 20px;
+        border-radius: 16px;
+        background: white;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        min-width: 120px;
+    }
+    
+    .medal-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .medal-card .medal {
+        font-size: 50px;
+        margin-bottom: 10px;
+    }
+    
+    .medal-card .rank-number {
+        font-size: 24px;
+        font-weight: 800;
+    }
+    
+    .medal-card .name {
+        font-weight: 600;
+        font-size: 16px;
+        margin: 5px 0;
+    }
+    
+    .medal-card .score {
+        font-size: 20px;
+        font-weight: 700;
+        color: #4f46e5;
+    }
+    
+    .medal-card.first {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: #1f2937;
+        transform: scale(1.05);
+    }
+    
+    .medal-card.second {
+        background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+        color: white;
+    }
+    
+    .medal-card.third {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+    
+    .medal-card.first .score {
+        color: #1f2937;
+    }
+    
+    /* Table */
+    .table-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .table-container table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .table-container thead {
+        background: #f8fafc;
+    }
+    
+    .table-container th {
+        padding: 15px 20px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        color: #4b5563;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .table-container td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+    }
+    
+    .table-container tbody tr:hover {
+        background: #f8fafc;
+    }
+    
+    .table-container .rank-cell {
+        font-weight: 700;
+        font-size: 16px;
+        color: #4f46e5;
+    }
+    
+    .table-container .gold {
+        color: #f59e0b;
+    }
+    
+    .table-container .silver {
+        color: #9ca3af;
+    }
+    
+    .table-container .bronze {
+        color: #d97706;
+    }
+    
+    .badge-pass {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .badge-fail {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    
+    .empty-state .icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 10px;
+    }
+    
+    .empty-state p {
+        color: #6b7280;
+        font-size: 16px;
+    }
+</style>
+
+<div class="leaderboard-container">
+    <div class="leaderboard-header">
+        <h1>🏆 Leaderboard</h1>
+        <p>Top performers based on mock test scores</p>
+        <p style="font-size: 14px; margin-top: 5px; color: #9ca3af;">Total Students: {{ total_students }}</p>
+    </div>
+    
+    {% if top_3 %}
+    <!-- Top 3 Medals -->
+    <div class="top-3">
+        {% for item in top_3 %}
+            {% if forloop.counter == 1 %}
+            <div class="medal-card first">
+                <div class="medal">🥇</div>
+                <div class="rank-number">#{{ item.rank }}</div>
+                <div class="name">{{ item.username }}</div>
+                <div class="score">{{ item.avg_score }}%</div>
+                <div style="font-size: 12px; opacity: 0.8;">{{ item.test_count }} tests</div>
+            </div>
+            {% elif forloop.counter == 2 %}
+            <div class="medal-card second">
+                <div class="medal">🥈</div>
+                <div class="rank-number">#{{ item.rank }}</div>
+                <div class="name">{{ item.username }}</div>
+                <div class="score">{{ item.avg_score }}%</div>
+                <div style="font-size: 12px; opacity: 0.8;">{{ item.test_count }} tests</div>
+            </div>
+            {% else %}
+            <div class="medal-card third">
+                <div class="medal">🥉</div>
+                <div class="rank-number">#{{ item.rank }}</div>
+                <div class="name">{{ item.username }}</div>
+                <div class="score">{{ item.avg_score }}%</div>
+                <div style="font-size: 12px; opacity: 0.8;">{{ item.test_count }} tests</div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Full Leaderboard Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Student</th>
+                    <th>Avg Score</th>
+                    <th>Tests Taken</th>
+                    <th>Passed</th>
+                    <th>Latest Test</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in leaderboard_data %}
+                <tr>
+                    <td class="rank-cell">
+                        {% if item.rank == 1 %}🥇
+                        {% elif item.rank == 2 %}🥈
+                        {% elif item.rank == 3 %}🥉
+                        {% else %}#{{ item.rank }}{% endif %}
+                    </td>
+                    <td>
+                        <strong>{{ item.username }}</strong>
+                        {% if request.user.username == item.username %}
+                        <span style="font-size: 11px; background: #e0e7ff; color: #4f46e5; padding: 2px 8px; border-radius: 10px; margin-left: 5px;">You</span>
+                        {% endif %}
+                    </td>
+                    <td><strong>{{ item.avg_score }}%</strong></td>
+                    <td>{{ item.test_count }}</td>
+                    <td>
+                        <span class="badge-pass">{{ item.passed_count }} passed</span>
+                    </td>
+                    <td>
+                        <div style="font-size: 12px;">{{ item.latest_test }}</div>
+                        <div style="font-size: 10px; color: #9ca3af;">{{ item.completed_at|date:"Y-m-d" }}</div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <div class="icon">📊</div>
+                            <h3>No Data Yet</h3>
+                            <p>No students have taken any mock tests yet.<br>Be the first to take a test and appear on the leaderboard!</p>
+                            <a href="{% url 'mock_test_list' %}" class="btn-primary" style="display: inline-block; margin-top: 20px;">📝 Take a Test</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{% url 'student_dashboard' %}" class="text-indigo-600 hover:underline">← Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

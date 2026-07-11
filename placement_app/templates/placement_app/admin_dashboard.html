@@ -1,0 +1,39 @@
+{% extends 'placement_app/base.html' %}
+{% block content %}
+<div class="grid gap-6 lg:grid-cols-3 mb-6">
+    <div class="bg-white rounded shadow p-4">
+        <h3 class="font-semibold text-lg">Total records</h3>
+        <p class="text-3xl font-bold">{{ total }}</p>
+    </div>
+    <div class="bg-white rounded shadow p-4">
+        <h3 class="font-semibold text-lg">Placement success rate</h3>
+        <p class="text-3xl font-bold">{{ placement_rate }}%</p>
+    </div>
+    <div class="bg-white rounded shadow p-4">
+        <h3 class="font-semibold text-lg">Batch comparison</h3>
+        <p class="text-xl">Current: {{ batch_comparison.current_batch }}%</p>
+        <p class="text-sm">Previous: {{ batch_comparison.previous_batch }}%</p>
+    </div>
+</div>
+<div class="grid gap-6 lg:grid-cols-2">
+    <section class="bg-white rounded shadow p-4">
+        <h2 class="text-xl font-semibold mb-4">Company success rate</h2>
+        <ul class="space-y-2">
+            {% for company, count in company_counts.items %}
+            <li class="flex justify-between border-b pb-2"> <span>{{ company }}</span><span>{{ count }}</span></li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="bg-white rounded shadow p-4">
+        <h2 class="text-xl font-semibold mb-4">Skill demand heatmap</h2>
+        <div class="space-y-3">
+            {% for item in demand_heatmap %}
+            <div class="border rounded p-3">
+                <div class="flex justify-between"><span>{{ item.skill }}</span><span>{{ item.value }}%</span></div>
+                <div class="h-2 bg-slate-200 rounded mt-2"><div class="h-2 bg-blue-600 rounded" style="width: {{ item.value }}%"></div></div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

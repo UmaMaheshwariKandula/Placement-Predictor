@@ -1,0 +1,262 @@
+{% extends 'placement_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="glass-card p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold section-header">{{ mock_test.title }}</h2>
+        <div class="text-right">
+            <p class="text-sm text-gray-500">⏱️ Time Limit: {{ mock_test.time_limit }} minutes</p>
+            <p class="text-sm text-gray-500">📝 Total Questions: {{ questions|length }}</p>
+        </div>
+    </div>
+    
+    <form method="post" action="{% url 'mock_test_submit' mock_test.id %}" id="test-form" onsubmit="return confirmSubmit()">
+        {% csrf_token %}
+        
+        {% for question in questions %}
+        <div class="border rounded-lg p-4 mb-4" id="question-{{ question.id }}">
+            <p class="font-semibold mb-3">Q{{ forloop.counter }}. {{ question.question_text }}</p>
+            <div class="space-y-2 ml-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="question_{{ question.id }}" value="A" class="question-radio" data-qid="{{ question.id }}">
+                    <span>A) {{ question.option_a }}</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="question_{{ question.id }}" value="B" class="question-radio" data-qid="{{ question.id }}">
+                    <span>B) {{ question.option_b }}</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="question_{{ question.id }}" value="C" class="question-radio" data-qid="{{ question.id }}">
+                    <span>C) {{ question.option_c }}</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="question_{{ question.id }}" value="D" class="question-radio" data-qid="{{ question.id }}">
+                    <span>D) {{ question.option_d }}</span>
+                </label>
+            </div>
+            <div class="text-right text-sm text-gray-400 mt-2">
+                <span class="unanswered-warning hidden text-orange-500">⚠️ Not answered</span>
+                <span class="answered-tick hidden text-green-500">✓ Answered</span>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="flex justify-between items-center mt-6">
+            <div>
+                <button type="button" onclick="checkUnanswered()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 mr-2">
+                    Check Unanswered
+                </button>
+                <button type="submit" class="btn-primary" id="submit-btn">
+                    Submit Test
+                </button>
+            </div>
+            <a href="{% url 'mock_test_list' %}" class="text-gray-500 hover:underline">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<!-- Warning Modal for Unanswered Questions -->
+<div id="warning-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full">
+        <h3 class="text-xl font-bold mb-4 text-red-600">⚠️ Unanswered Questions</h3>
+        <p class="mb-4">You have <span id="unanswered-count" class="font-bold text-red-600">0</span> unanswered question(s):</p>
+        <div id="unanswered-list" class="max-h-60 overflow-y-auto mb-4 text-sm"></div>
+        <div class="flex justify-end gap-3">
+            <button onclick="closeModal()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg">Go Back</button>
+            <button onclick="submitAnyway()" class="bg-red-600 text-white px-4 py-2 rounded-lg">Submit Anyway</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Timer functionality with warnings
+    let totalTime = {{ mock_test.time_limit }} * 60;
+    let timeLeft = totalTime;
+    let timerInterval;
+    let warningShown5 = false;
+    let warningShown1 = false;
+    
+    const timerDisplay = document.createElement('div');
+    timerDisplay.className = 'fixed bottom-4 right-4 z-50 px-4 py-2 rounded-full shadow-lg font-bold';
+    timerDisplay.style.backgroundColor = '#4f46e5';
+    timerDisplay.style.color = 'white';
+    timerDisplay.style.transition = 'all 0.3s ease';
+    document.body.appendChild(timerDisplay);
+    
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerDisplay.innerHTML = `⏱️ Time left: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Color warnings
+        if (timeLeft <= 60) {
+            timerDisplay.style.backgroundColor = '#dc2626';
+            timerDisplay.style.animation = 'pulse 1s infinite';
+        } else if (timeLeft <= 300) {
+            timerDisplay.style.backgroundColor = '#f59e0b';
+        } else {
+            timerDisplay.style.backgroundColor = '#4f46e5';
+        }
+        
+        // Show warnings
+        if (timeLeft <= 300 && !warningShown5) {
+            warningShown5 = true;
+            showToast("⚠️ Only 5 minutes remaining! Please complete your test.");
+        }
+        if (timeLeft <= 60 && !warningShown1) {
+            warningShown1 = true;
+            showToast("🔴 Last 1 minute! Submit your test now.");
+        }
+    }
+    
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-20 right-4 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-bounce';
+        toast.innerHTML = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+    }
+    
+    function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                showToast("⏰ Time's up! Submitting your test...");
+                setTimeout(() => {
+                    document.getElementById('test-form').submit();
+                }, 1000);
+            }
+        }, 1000);
+    }
+    
+    // Track answered questions
+    const radios = document.querySelectorAll('.question-radio');
+    const answeredStatus = {};
+    
+    function updateAnsweredStatus() {
+        radios.forEach(radio => {
+            const qid = radio.dataset.qid;
+            const questionDiv = document.getElementById(`question-${qid}`);
+            const answeredSpan = questionDiv.querySelector('.answered-tick');
+            const unansweredSpan = questionDiv.querySelector('.unanswered-warning');
+            const isChecked = radio.checked;
+            
+            if (isChecked) {
+                answeredStatus[qid] = true;
+            }
+        });
+        
+        // Update UI for each question
+        document.querySelectorAll('.border.rounded-lg').forEach(questionDiv => {
+            const radiosInDiv = questionDiv.querySelectorAll('.question-radio');
+            const qid = radiosInDiv[0]?.dataset.qid;
+            const answered = Object.values(radiosInDiv).some(r => r.checked);
+            const answeredSpan = questionDiv.querySelector('.answered-tick');
+            const unansweredSpan = questionDiv.querySelector('.unanswered-warning');
+            
+            if (answered) {
+                if (answeredSpan) answeredSpan.classList.remove('hidden');
+                if (unansweredSpan) unansweredSpan.classList.add('hidden');
+                questionDiv.style.borderLeft = '4px solid #22c55e';
+            } else {
+                if (answeredSpan) answeredSpan.classList.add('hidden');
+                if (unansweredSpan) unansweredSpan.classList.remove('hidden');
+                questionDiv.style.borderLeft = '4px solid #f59e0b';
+            }
+        });
+    }
+    
+    radios.forEach(radio => {
+        radio.addEventListener('change', updateAnsweredStatus);
+    });
+    
+    // Check unanswered questions before submit
+    let submitAnywayFlag = false;
+    
+    function checkUnanswered() {
+        const totalQuestions = {{ questions|length }};
+        const answered = [];
+        const unanswered = [];
+        
+        document.querySelectorAll('.border.rounded-lg').forEach((questionDiv, index) => {
+            const radiosInDiv = questionDiv.querySelectorAll('.question-radio');
+            const isAnswered = Array.from(radiosInDiv).some(r => r.checked);
+            const questionText = questionDiv.querySelector('.font-semibold')?.innerText || `Question ${index + 1}`;
+            
+            if (isAnswered) {
+                answered.push(index + 1);
+            } else {
+                unanswered.push(index + 1);
+            }
+        });
+        
+        if (unanswered.length > 0) {
+            const modal = document.getElementById('warning-modal');
+            const unansweredCount = document.getElementById('unanswered-count');
+            const unansweredList = document.getElementById('unanswered-list');
+            
+            unansweredCount.innerText = unanswered.length;
+            unansweredList.innerHTML = `<p class="text-red-600">Questions: ${unanswered.join(', ')}</p>`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        } else {
+            showToast("✅ All questions answered! You can submit.");
+        }
+    }
+    
+    function closeModal() {
+        const modal = document.getElementById('warning-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    
+    function submitAnyway() {
+        closeModal();
+        document.getElementById('test-form').submit();
+    }
+    
+    function confirmSubmit() {
+        const totalQuestions = {{ questions|length }};
+        let answeredCount = 0;
+        
+        document.querySelectorAll('.border.rounded-lg').forEach(questionDiv => {
+            const radiosInDiv = questionDiv.querySelectorAll('.question-radio');
+            if (Array.from(radiosInDiv).some(r => r.checked)) {
+                answeredCount++;
+            }
+        });
+        
+        if (answeredCount < totalQuestions) {
+            const unanswered = totalQuestions - answeredCount;
+            return confirm(`⚠️ You have ${unanswered} unanswered question(s). Are you sure you want to submit?`);
+        }
+        return confirm("✅ You have answered all questions! Submit your test?");
+    }
+    
+    // Start timer on page load
+    startTimer();
+    updateAnsweredStatus();
+    
+    // Add pulse animation style
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-bounce {
+            animation: bounce 0.5s ease;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-10px); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}
