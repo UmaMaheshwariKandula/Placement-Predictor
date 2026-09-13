@@ -4,6 +4,7 @@ Django settings for placement_predictor project.
 
 from pathlib import Path
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,6 +12,11 @@ SECRET_KEY = 'django-insecure-@your-secret-key-here-change-this'
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
+
+
+# =========================
+# APPLICATIONS
+# =========================
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -23,6 +29,11 @@ INSTALLED_APPS = [
     'placement_app',
 ]
 
+
+# =========================
+# MIDDLEWARE
+# =========================
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -33,7 +44,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+# =========================
+# URL CONFIGURATION
+# =========================
+
 ROOT_URLCONF = 'placement_predictor.urls'
+
+
+# =========================
+# TEMPLATES
+# =========================
 
 TEMPLATES = [
     {
@@ -51,14 +72,28 @@ TEMPLATES = [
     },
 ]
 
+
+# =========================
+# WSGI
+# =========================
+
 WSGI_APPLICATION = 'placement_predictor.wsgi.application'
 
+
+# =========================
+# DATABASE
+# =========================
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}'
+    )
 }
+
+
+# =========================
+# PASSWORD VALIDATION
+# =========================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -75,21 +110,60 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# =========================
+# INTERNATIONALIZATION
+# =========================
+
 LANGUAGE_CODE = 'en-us'
+
 TIME_ZONE = 'UTC'
+
 USE_I18N = True
+
 USE_TZ = True
 
+
+# =========================
+# STATIC FILES
+# =========================
+
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
+
+# =========================
+# MEDIA FILES
+# =========================
 
 MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# =========================
+# DEFAULT PRIMARY KEY
+# =========================
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# =========================
+# EMAIL
+# =========================
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+
+# =========================
+# LOGIN / LOGOUT
+# =========================
+
 LOGIN_URL = 'login'
+
 LOGIN_REDIRECT_URL = 'dashboard'
+
 LOGOUT_REDIRECT_URL = 'login'
