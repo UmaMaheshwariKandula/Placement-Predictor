@@ -14,7 +14,13 @@ SECRET_KEY = 'django-insecure-@your-secret-key-here-change-this'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'umamaheshwari.pythonanywhere.com']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'umamaheshwari.pythonanywhere.com',
+    'placement-predictor-gbgw-gcfef17u8-trade-lens-ai.vercel.app',
+    'placement-predictor-gbgw-neon.vercel.app',
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -25,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'placement_app',  # Your app
+    'placement_app',
 ]
 
 MIDDLEWARE = [
